@@ -1,0 +1,1388 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>漢字フラッシュカード（小3・冬講1〜6）</title>
+  <style>
+    :root{
+      --bg:#081018;
+      --panel:#101c2c;
+      --panel2:#0b1523;
+      --text:#f0f6ff;
+      --muted:#a8bddf;
+
+      /* kid-friendly bright accents */
+      --poke:#ffd54a;
+      --mc:#49d07e;
+      --rbx:#ff5aa5;
+      --accent:#6aa6ff;
+
+      --ok:#46d39a;
+      --danger:#ff6a6a;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 14px 34px rgba(0,0,0,.45);
+      --radius: 18px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      /* iOS safe area */
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      line-height:1.45;
+
+      /* playful background */
+      background:
+        radial-gradient(900px 520px at 20% 0%, rgba(255,213,74,.18), transparent 60%),
+        radial-gradient(820px 520px at 90% 10%, rgba(73,208,126,.16), transparent 55%),
+        radial-gradient(900px 520px at 60% 100%, rgba(255,90,165,.16), transparent 55%),
+        var(--bg);
+    }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:0 14px; }
+
+    /* Top bar */
+    header{
+      position:sticky; top:0;
+      z-index:20;
+      padding-top: calc(10px + var(--safe-top));
+      padding-bottom: 10px;
+      background: linear-gradient(to bottom, rgba(8,16,24,.95), rgba(8,16,24,.60));
+      backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--border);
+    }
+    .toprow{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      min-width: 220px;
+    }
+    .logo{
+      width:42px; height:42px; border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.35), transparent 60%),
+        linear-gradient(135deg, rgba(255,213,74,.95), rgba(106,166,255,.90));
+      box-shadow: 0 10px 26px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.18);
+      display:grid; place-items:center;
+      font-weight:900; color:#1a1a1a;
+    }
+    h1{ margin:0; font-size:16px; letter-spacing:.2px; }
+    .sub{ margin:4px 0 0; color:var(--muted); font-size:12px; }
+
+    /* Controls row (mobile first) */
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (min-width: 720px){
+      .controls{ grid-template-columns: 220px 1fr 220px 220px 140px; }
+    }
+
+    .control{
+      background: rgba(255,255,255,.04);
+      border:1px solid var(--border);
+      border-radius: 16px;
+      padding:10px 12px;
+      display:flex; align-items:center; gap:10px;
+      min-height: 46px;
+    }
+    .control label{ color:var(--muted); font-size:12px; white-space:nowrap; }
+    input[type="search"], select{
+      width:100%;
+      background:transparent; color:var(--text);
+      border:none; outline:none;
+      font-size:14px;
+      line-height:1.2;
+      -webkit-appearance:none;
+      appearance:none;
+    }
+    select{ padding-right:22px; }
+    .selectWrap{ position:relative; width:100%; }
+    .selectWrap::after{
+      content:"▾";
+      position:absolute; right:8px; top:50%; transform:translateY(-55%);
+      color:var(--muted);
+      pointer-events:none;
+      font-size:12px;
+    }
+    .mini{ color:var(--muted); font-size:12px; font-family:var(--mono); }
+
+    /* Big touch buttons */
+    .btn{
+      cursor:pointer; user-select:none;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius: 16px;
+      transition: transform .05s ease, background .15s ease, border-color .15s ease;
+      font-size:14px;
+      display:inline-flex; align-items:center; gap:8px;
+      min-height: 46px; /* thumb friendly */
+      touch-action: manipulation;
+    }
+    .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn.primary{ border-color: rgba(106,166,255,.45); background: rgba(106,166,255,.14); }
+    .btn.ok{ border-color: rgba(70,211,154,.45); background: rgba(70,211,154,.12); }
+    .btn.danger{ border-color: rgba(255,106,106,.45); background: rgba(255,106,106,.12); }
+    .btn.poke{ border-color: rgba(255,213,74,.55); background: rgba(255,213,74,.14); color: #1a1a1a; font-weight:800; }
+    .btn[disabled]{ opacity:.45; cursor:not-allowed; }
+
+    main{ padding: 14px 0 calc(16px + var(--safe-bottom)); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 920px){
+      .grid{ grid-template-columns: 1.2fr .8fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(16,28,44,.96), rgba(8,16,24,.92));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hd{
+      padding:12px 14px;
+      border-bottom:1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      flex-wrap:wrap;
+    }
+    .pill{ font-family:var(--mono); color:var(--muted); font-size:12px; }
+    .stats{ display:flex; gap:8px; align-items:center; color:var(--muted); font-size:12px; flex-wrap:wrap; }
+    .stat{
+      display:inline-flex; gap:6px; align-items:center;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+    }
+
+    /* Flash card */
+    .flash{ padding: 14px; }
+    .flashbox{
+      min-height: 280px;
+      border-radius: 18px;
+      border:1px solid var(--border);
+      background:
+        radial-gradient(900px 440px at 15% 0%, rgba(255,213,74,.14), transparent 55%),
+        radial-gradient(900px 440px at 85% 10%, rgba(73,208,126,.12), transparent 55%),
+        radial-gradient(900px 440px at 60% 100%, rgba(255,90,165,.12), transparent 55%),
+        rgba(255,255,255,.03);
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      padding:18px 16px;
+      text-align:center;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      touch-action: manipulation;
+    }
+    .flashbox:focus{ outline: 3px solid rgba(106,166,255,.40); outline-offset:3px; }
+    .kicker{ color:var(--muted); font-size:12px; margin-bottom:12px; }
+    .prompt{ font-size:22px; line-height:1.65; }
+    .uline{ text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px; }
+    .answer{ font-size:40px; font-weight:900; letter-spacing:.5px; margin-top:12px; }
+    .hint{ margin-top:14px; color:var(--muted); font-size:12px; }
+    .tapBadge{
+      position:absolute;
+      right:12px; top:12px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      font-size:12px;
+      color: var(--text);
+    }
+
+    /* Big bottom action bar (sticky) */
+    .actionBar{
+      position: sticky;
+      bottom: calc(10px + var(--safe-bottom));
+      z-index: 15;
+      padding: 10px 14px;
+      margin: 0 14px 14px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(8,16,24,.75);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 14px 34px rgba(0,0,0,.45);
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap:10px;
+    }
+    @media (min-width: 920px){
+      .actionBar{
+        position: static;
+        margin: 0;
+        border-radius: 0;
+        border: none;
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        grid-template-columns: auto;
+        display:flex;
+        gap:10px;
+        padding: 0 14px 14px;
+      }
+    }
+
+    /* List panel (mobile friendly: collapsible) */
+    details.listDetails{
+      border-top:1px solid var(--border);
+      background: rgba(255,255,255,.02);
+    }
+    details.listDetails > summary{
+      list-style:none;
+      cursor:pointer;
+      padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      user-select:none;
+    }
+    details.listDetails > summary::-webkit-details-marker{ display:none; }
+    .summaryLeft{ display:flex; align-items:center; gap:10px; }
+    .chip{
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      font-size:12px; color:var(--muted);
+      font-family:var(--mono);
+    }
+
+    .list{
+      max-height: 52vh;
+      overflow:auto;
+      border-top:1px solid var(--border);
+    }
+
+    table{ width:100%; border-collapse:collapse; }
+    th,td{ padding:12px 10px; border-bottom:1px solid var(--border); font-size:13px; vertical-align:top; }
+    th{ position:sticky; top:0; background: rgba(11,21,35,.96); backdrop-filter: blur(8px); text-align:left; color:var(--muted); font-weight:700; }
+    tr:active td{ background: rgba(255,255,255,.05); }
+    .tag{ font-family:var(--mono); font-size:11px; color:var(--muted); }
+    .rowbtn{
+      cursor:pointer;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 10px;
+      border-radius:14px;
+      font-size:13px;
+      min-height: 44px;
+      width: 100%;
+    }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      bottom: calc(16px + var(--safe-bottom));
+      left:50%; transform:translateX(-50%);
+      background:rgba(16,28,44,.95);
+      border:1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 999px;
+      padding:12px 14px;
+      font-size:13px;
+      color:var(--text);
+      display:none;
+      z-index:50;
+      max-width: calc(100vw - 24px);
+      text-align:center;
+    }
+
+    /* Simple modal */
+    dialog{
+      border:1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(11,21,35,.98);
+      color:var(--text);
+      box-shadow: var(--shadow);
+      padding:0;
+      width:min(760px, calc(100vw - 22px));
+    }
+    dialog::backdrop{ background: rgba(0,0,0,.55); }
+    .modalHd{
+      padding:14px 14px;
+      border-bottom:1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      flex-wrap:wrap;
+    }
+    .modalBody{ padding:14px 14px 16px; }
+    textarea{
+      width:100%;
+      min-height: 210px;
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding:12px;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.5;
+    }
+    .small{ color:var(--muted); font-size:12px; }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .dangerText{ color: var(--danger); }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .btn{ transition:none; }
+    }
+
+    /* Printer-friendly minimal */
+    @media print{
+      header, .actionBar, details.listDetails, .toast { display:none !important; }
+      body{ background:white; color:black; }
+      .card{ box-shadow:none; border:1px solid #ccc; }
+      .flashbox{ cursor:default; }
+    }
+
+    /* Focus (fullscreen) mode */
+    body.focus-mode header,
+    body.focus-mode #desktopList,
+    body.focus-mode details.listDetails,
+    body.focus-mode .actionBar,
+    body.focus-mode .toast {
+      display: none !important;
+    }
+
+    body.focus-mode main {
+      padding: 0 !important;
+    }
+
+    body.focus-mode .wrap {
+      max-width: none !important;
+      padding: 0 !important;
+    }
+
+    body.focus-mode .grid {
+      grid-template-columns: 1fr !important;
+      gap: 0 !important;
+    }
+
+    body.focus-mode .card {
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      height: 100vh;
+      height: 100svh; /* iOS */
+    }
+
+    body.focus-mode .hd {
+      display: none !important;
+    }
+
+    body.focus-mode .flash {
+      height: 100%;
+      padding: 0 !important;
+    }
+
+    body.focus-mode .flashbox {
+      height: 100%;
+      min-height: 100%;
+      border-radius: 0 !important;
+      border: none !important;
+      padding: calc(24px + var(--safe-top)) 18px calc(24px + var(--safe-bottom)) 18px !important;
+    }
+
+    /* 文字を少し大きく（好みで調整可） */
+    body.focus-mode .prompt { font-size: clamp(22px, 4.2vw, 44px); }
+    body.focus-mode .answer { font-size: clamp(34px, 7vw, 72px); }
+    body.focus-mode .hint { font-size: 14px; opacity: .9; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <div class="toprow">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">⚡</div>
+          <div>
+            <h1>漢字フラッシュカード</h1>
+            <div class="sub">タップで「もんだい⇄こたえ」！ たくさん正解してレベルアップ！</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn" id="btnHelp" title="使い方">🕹️ 使い方</button>
+          <button class="btn" id="btnData" title="データの編集">🧰 データ</button>
+          <button class="btn" id="btnFocus" title="集中モード">🔍 集中</button>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="control">
+          <label for="lesson">クエスト</label>
+          <div class="selectWrap">
+            <select id="lesson" aria-label="回を選ぶ">
+              <option value="ALL">ぜんぶ</option>
+              <option value="冬講1">冬講1</option>
+              <option value="冬講2">冬講2</option>
+              <option value="冬講3">冬講3</option>
+              <option value="冬講4">冬講4</option>
+              <option value="冬講5">冬講5</option>
+              <option value="冬講6">冬講6</option>
+              <option value="FAV">★お気に入り</option>
+              <option value="MISS">✖まちがい</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control" style="grid-column: span 2;">
+          <label for="q">さがす</label>
+          <input id="q" type="search" inputmode="search" placeholder="例：深、温水、きょく、入賞…" />
+        </div>
+
+        <div class="control">
+          <label>モード</label>
+          <div class="selectWrap">
+            <select id="mode" aria-label="表示モード">
+              <option value="Q">もんだい→こたえ</option>
+              <option value="A">こたえ→もんだい</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control">
+          <label for="auto">オート</label>
+          <div class="selectWrap">
+            <select id="auto" aria-label="自動めくり">
+              <option value="0">OFF</option>
+              <option value="2">2秒</option>
+              <option value="3">3秒</option>
+              <option value="5">5秒</option>
+              <option value="8">8秒</option>
+            </select>
+          </div>
+          <span class="mini" id="autoState">—</span>
+        </div>
+
+        <div class="control">
+          <label>レベル</label>
+          <span class="mini" id="progress">0/0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="grid">
+        <!-- Flashcard panel -->
+        <section class="card" aria-label="フラッシュカード">
+          <div class="hd">
+            <div class="pill" id="pill">—</div>
+            <div class="stats">
+              <span class="stat" title="お気に入り">★ <span id="favCount">0</span></span>
+              <span class="stat" title="まちがい">✖ <span id="missCount">0</span></span>
+              <span class="stat" title="覚えた">✔ <span id="okCount">0</span></span>
+              <span class="stat" title="XP（覚えた×10）">⚔️ <span id="xp">0</span></span>
+            </div>
+          </div>
+
+          <div class="flash">
+            <div class="flashbox" id="flashbox" tabindex="0" role="button" aria-label="カードを反転">
+              <div class="tapBadge" id="tapBadge">タップ！</div>
+              <div class="kicker" id="kicker">—</div>
+              <div class="prompt" id="prompt">読み込み中…</div>
+              <div class="answer" id="answer" style="display:none;">—</div>
+              <div class="hint">ヒント：カードをタップでめくるよ</div>
+            </div>
+          </div>
+
+          <!-- Mobile sticky action bar -->
+          <div class="actionBar" aria-label="操作バー">
+            <button class="btn" id="prev" aria-label="前へ">◀️ 前</button>
+            <button class="btn primary" id="flip" aria-label="めくる">🔁 めくる</button>
+            <button class="btn" id="next" aria-label="次へ">次 ▶️</button>
+            <button class="btn" id="shuffle" aria-label="シャッフル">🎲 まぜる</button>
+
+            <button class="btn ok" id="markOk" aria-label="覚えた">✅ できた</button>
+            <button class="btn danger" id="markMiss" aria-label="まちがい">💥 ミス</button>
+            <button class="btn poke" id="toggleFav" aria-label="お気に入り">⭐ すき</button>
+            <button class="btn" id="reset" aria-label="リセット">♻️ リセット</button>
+          </div>
+
+          <!-- List as collapsible on mobile -->
+          <details class="listDetails" id="listDetails">
+            <summary>
+              <div class="summaryLeft">
+                <b>📜 一覧（タップでひらく）</b>
+                <span class="chip">件数 <span id="listCount">0</span></span>
+              </div>
+              <span class="chip">▶︎</span>
+            </summary>
+
+            <div class="list" id="listWrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:86px;">回</th>
+                    <th style="width:54px;">#</th>
+                    <th>もんだい</th>
+                    <th style="width:120px;">こたえ</th>
+                    <th style="width:92px;">ひらく</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+              </table>
+            </div>
+            <div class="small" style="padding:10px 14px 14px; color:var(--muted);">
+              ※「ひらく」で、そのカードにジャンプ！
+            </div>
+          </details>
+        </section>
+
+        <!-- Desktop only: keep the right list panel -->
+        <aside class="card" aria-label="一覧（PC用）" id="desktopList" style="display:none;">
+          <div class="hd">
+            <div class="pill">一覧（フィルタ反映）</div>
+            <div class="stats">
+              <span class="stat">件数 <span id="listCount2">0</span></span>
+            </div>
+          </div>
+          <div class="list" style="max-height: 78vh;">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:84px;">回</th>
+                  <th style="width:52px;">#</th>
+                  <th>問題</th>
+                  <th style="width:110px;">解答</th>
+                  <th style="width:84px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="tbody2"></tbody>
+            </table>
+          </div>
+          <div class="small" style="padding:10px 14px 14px; color:var(--muted);">
+            ※ 右端の「開く」でそのカードへジャンプします。
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">—</div>
+
+  <!-- Help dialog -->
+  <dialog id="helpDlg">
+    <div class="modalHd">
+      <div>
+        <div style="font-weight:900; font-size:16px;">🕹️ 使い方</div>
+        <div class="small">iPad/iPhoneは「下のボタン」が最強。PCはキーでもOK：Space めくる / → 次 / ← 前 / S まぜる / F すき / 1 できた / 2 ミス</div>
+      </div>
+      <button class="btn" id="closeHelp">閉じる</button>
+    </div>
+    <div class="modalBody">
+      <ul style="margin:0; padding-left:18px; color:var(--text);">
+        <li>カードを<b>タップ</b>すると、こたえが出るよ。</li>
+        <li><b>✅できた / 💥ミス / ⭐すき</b> をつけて、あとで復習できる。</li>
+        <li>「モード」を<b>こたえ→もんだい</b>にすると、読みから当てる練習になる。</li>
+        <li>データはこの端末の中に保存（お気に入り/正解/間違い）。</li>
+      </ul>
+    </div>
+  </dialog>
+
+  <!-- Data dialog -->
+  <dialog id="dataDlg">
+    <div class="modalHd">
+      <div>
+        <div style="font-weight:900; font-size:16px;">🧰 カードデータ（編集OK）</div>
+        <div class="small">JSON配列。編集→「反映」。壊したら「元に戻す」。</div>
+      </div>
+      <div class="row">
+        <button class="btn" id="restoreData">元に戻す</button>
+        <button class="btn primary" id="applyData">反映</button>
+        <button class="btn" id="closeData">閉じる</button>
+      </div>
+    </div>
+    <div class="modalBody">
+      <textarea id="dataArea" spellcheck="false"></textarea>
+      <div class="small" style="margin-top:10px;">
+        フォーマット：<span style="font-family:var(--mono)">{ "lesson":"冬講1","no":1,"q":"…","a":"…","u":"…" }</span>
+        <span class="dangerText" id="dataErr" style="margin-left:10px;"></span>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // -----------------------------
+    // Data
+    // -----------------------------
+    // const DEFAULT_CARDS = [
+    //   // 冬講1
+    //   {lesson:"冬講1", no:1, q:"ゲームは空想のせかい。", a:"くうそう", u:"空想"},
+    //   {lesson:"冬講1", no:2, q:"犬の世話をする。", a:"せわ", u:"世話"},
+    //   {lesson:"冬講1", no:3, q:"秋もすっかり深まった。", a:"ふか", u:"深"},
+    //   {lesson:"冬講1", no:4, q:"学者の話をきく。", a:"がくしゃ", u:"学者"},
+    //   {lesson:"冬講1", no:5, q:"明るい曲がすきだ。", a:"きょく", u:"曲"},
+    //   {lesson:"冬講1", no:6, q:"電車が鉄橋にさしかかった。", a:"てっきょう", u:"鉄橋"},
+    //   {lesson:"冬講1", no:7, q:"水泳を習いはじめた。", a:"なら", u:"習"},
+    //   {lesson:"冬講1", no:8, q:"高い所へ手をのばす。", a:"ところ", u:"所"},
+    //   {lesson:"冬講1", no:9, q:"くぎを打ちつける。", a:"う", u:"打"},
+    //   {lesson:"冬講1", no:10, q:"国語の問題をとく。", a:"もんだい", u:"問題"},
+    //   {lesson:"冬講1", no:11, q:"カジを出さないようにする。", a:"火事", u:"カジ"},
+    //   {lesson:"冬講1", no:12, q:"ぼくのいなかはキュウシュウだ。", a:"九州", u:"キュウシュウ"},
+    //   {lesson:"冬講1", no:13, q:"ひまわりのケンキュウをする。", a:"研究", u:"ケンキュウ"},
+    //   {lesson:"冬講1", no:14, q:"あたらしいケしゴムをかう。", a:"消", u:"ケ"},
+    //   {lesson:"冬講1", no:15, q:"友だちとシンチョウをくらべる。", a:"身長", u:"シンチョウ"},
+    //   {lesson:"冬講1", no:16, q:"みんなでブンシュウをつくる。", a:"文集", u:"ブンシュウ"},
+    //   {lesson:"冬講1", no:17, q:"イチバンダシャが一るいに出た。", a:"打者", u:"ダシャ"},
+    //   {lesson:"冬講1", no:18, q:"ショウサンのないたたかいをする。", a:"勝算", u:"ショウサン"},
+    //   {lesson:"冬講1", no:19, q:"ショウバイのしかたをまなぶ。", a:"商売", u:"ショウバイ"},
+    //   {lesson:"冬講1", no:20, q:"むねにくんショウをつける。", a:"章", u:"ショウ"},
+
+    //   // 冬講2
+    //   {lesson:"冬講2", no:1, q:"ごく身近なできごと。", a:"みぢか", u:"身近"},
+    //   {lesson:"冬講2", no:2, q:"学習ノートにかく。", a:"がくしゅう", u:"学習"},
+    //   {lesson:"冬講2", no:3, q:"体重計にのってみる。", a:"たいじゅうけい", u:"体重計"},
+    //   {lesson:"冬講2", no:4, q:"神様におねがいする。", a:"かみさま", u:"神様"},
+    //   {lesson:"冬講2", no:5, q:"その他の話がききたい。", a:"た（ほか）", u:"他"},
+    //   {lesson:"冬講2", no:6, q:"店に上着をおきわすれる。", a:"うわぎ", u:"上着"},
+    //   {lesson:"冬講2", no:7, q:"わき水を注ぐ。", a:"そそ", u:"注"},
+    //   {lesson:"冬講2", no:8, q:"気持ちが安定している。", a:"あんてい", u:"安定"},
+    //   {lesson:"冬講2", no:9, q:"からだの調子がよい。", a:"ちょうし", u:"調子"},
+    //   {lesson:"冬講2", no:10, q:"短期間の入院ですんだ。", a:"たんきかん", u:"短期間"},
+    //   {lesson:"冬講2", no:11, q:"タウえを手つだう。", a:"田植", u:"タウ"},
+    //   {lesson:"冬講2", no:12, q:"シンカイにすむ魚をみた。", a:"深海", u:"シンカイ"},
+    //   {lesson:"冬講2", no:13, q:"フェリーにジョウセンする。", a:"乗船", u:"ジョウセン"},
+    //   {lesson:"冬講2", no:14, q:"コップにシもんがついた。", a:"指", u:"シ"},
+    //   {lesson:"冬講2", no:15, q:"メイショウの地を見てまわる。", a:"名勝", u:"メイショウ"},
+    //   {lesson:"冬講2", no:16, q:"イキつぎせずにおよぐ。", a:"息", u:"イキ"},
+    //   {lesson:"冬講2", no:17, q:"足をハヤめてすすむ。", a:"速", u:"ハヤ"},
+    //   {lesson:"冬講2", no:18, q:"リソウを思いえがく。", a:"理想", u:"リソウ"},
+    //   {lesson:"冬講2", no:19, q:"マゴコロをこめてつくる。", a:"真心", u:"マゴコロ"},
+    //   {lesson:"冬講2", no:20, q:"ヨの中を見わたす。", a:"世", u:"ヨ"},
+
+    //   // 冬講3
+    //   {lesson:"冬講3", no:1, q:"校庭に集合した。", a:"こうてい", u:"校庭"},
+    //   {lesson:"冬講3", no:2, q:"草笛をつくるのがうまい。", a:"くさぶえ", u:"草笛"},
+    //   {lesson:"冬講3", no:3, q:"ごみを投げないように。", a:"な", u:"投"},
+    //   {lesson:"冬講3", no:4, q:"車の運転がうまい。", a:"うんてん", u:"運転"},
+    //   {lesson:"冬講3", no:5, q:"はなれ小島にすんでいる。", a:"こじま", u:"小島"},
+    //   {lesson:"冬講3", no:6, q:"ゆったりと湯船につかる。", a:"ゆぶね", u:"湯船"},
+    //   {lesson:"冬講3", no:7, q:"大豆をつくっている。", a:"だいず", u:"大豆"},
+    //   {lesson:"冬講3", no:8, q:"ねだんが倍になった。", a:"ばい", u:"倍"},
+    //   {lesson:"冬講3", no:9, q:"万年筆で丸をつけた。", a:"まんねんひつ", u:"万年筆"},
+    //   {lesson:"冬講3", no:10, q:"地下鉄にのる。", a:"ちかてつ", u:"地下鉄"},
+    //   {lesson:"冬講3", no:11, q:"帰りにホンヤへ立ちよる。", a:"本屋", u:"ホンヤ"},
+    //   {lesson:"冬講3", no:12, q:"おばあさんにムカシバナシをきく。", a:"昔話", u:"ムカシバナシ"},
+    //   {lesson:"冬講3", no:13, q:"テソウをみてもらった。", a:"手相", u:"テソウ"},
+    //   {lesson:"冬講3", no:14, q:"あたりはハクギンのせかいだ。", a:"白銀", u:"ハクギン"},
+    //   {lesson:"冬講3", no:15, q:"おもなメンバーでタイダンする。", a:"対談", u:"タイダン"},
+    //   {lesson:"冬講3", no:16, q:"母はタンカをよむ。", a:"短歌", u:"タンカ"},
+    //   {lesson:"冬講3", no:17, q:"本のダイメイをおしえてほしい。", a:"題名", u:"ダイメイ"},
+    //   {lesson:"冬講3", no:18, q:"あらたなルールをサダめる。", a:"定", u:"サダ"},
+    //   {lesson:"冬講3", no:19, q:"金がくをキニュウする。", a:"記入", u:"キニュウ"},
+    //   {lesson:"冬講3", no:20, q:"おじは馬のチョウキョウをする。", a:"調教", u:"チョウキョウ"},
+
+    //   // 冬講4
+    //   {lesson:"冬講4", no:1, q:"花畑がひろがる。", a:"はなばたけ", u:"花畑"},
+    //   {lesson:"冬講4", no:2, q:"本箱のなかみをせいりする。", a:"ほんばこ", u:"本箱"},
+    //   {lesson:"冬講4", no:3, q:"とても幸せな日だ。", a:"しあわせ", u:"幸"},
+    //   {lesson:"冬講4", no:4, q:"力投のおかげで勝てた。", a:"りきとう", u:"力投"},
+    //   {lesson:"冬講4", no:5, q:"夏休みももう終わりだ。", a:"お", u:"終"},
+    //   {lesson:"冬講4", no:6, q:"天ぷら定食を食べた。", a:"ていしょく", u:"定食"},
+    //   {lesson:"冬講4", no:7, q:"電話帳をさがす。", a:"でんわちょう", u:"電話帳"},
+    //   {lesson:"冬講4", no:8, q:"急いで追いかける。", a:"いそ", u:"急"},
+    //   {lesson:"冬講4", no:9, q:"大昔のできごと。", a:"おおむかし", u:"大昔"},
+    //   {lesson:"冬講4", no:10, q:"ねこが走り去った。", a:"さ", u:"去"},
+    //   {lesson:"冬講4", no:11, q:"カゾクで出かける。", a:"家族", u:"カゾク"},
+    //   {lesson:"冬講4", no:12, q:"オンスイプールでおよぐ。", a:"温水", u:"オンスイ"},
+    //   {lesson:"冬講4", no:13, q:"ソッキをおしえてもらう。", a:"速記", u:"ソッキ"},
+    //   {lesson:"冬講4", no:14, q:"少しのあいだキュウソクする。", a:"休息", u:"キュウソク"},
+    //   {lesson:"冬講4", no:15, q:"イケンがたいりつする。", a:"意見", u:"イケン"},
+    //   {lesson:"冬講4", no:16, q:"ヒニクないいかたをされる。", a:"皮肉", u:"ヒニク"},
+    //   {lesson:"冬講4", no:17, q:"サカミチをかけ上がる。", a:"坂道", u:"サカミチ"},
+    //   {lesson:"冬講4", no:18, q:"朝早くにトウコウする。", a:"登校", u:"トウコウ"},
+    //   {lesson:"冬講4", no:19, q:"シンパイをかけてごめんなさい。", a:"心配", u:"シンパイ"},
+    //   {lesson:"冬講4", no:20, q:"ゴリラのウゴきをまねする。", a:"動", u:"ウゴ"},
+
+    //   // 冬講5
+    //   {lesson:"冬講5", no:1, q:"つな引きで決勝にのこる。", a:"けっしょう", u:"決勝"},
+    //   {lesson:"冬講5", no:2, q:"明日は公園に集合だ。", a:"しゅうごう", u:"集合"},
+    //   {lesson:"冬講5", no:3, q:"げきで王子様の役をする。", a:"やく", u:"役"},
+    //   {lesson:"冬講5", no:4, q:"ダリアの球根を植えた。", a:"きゅうこん", u:"球根"},
+    //   {lesson:"冬講5", no:5, q:"太陽が山にしずんでいく。", a:"たいよう", u:"太陽"},
+    //   {lesson:"冬講5", no:6, q:"都会と農村の生活を調べる。", a:"とかい", u:"都会"},
+    //   {lesson:"冬講5", no:7, q:"上等のお茶を飲んだ。", a:"じょうとう", u:"上等"},
+    //   {lesson:"冬講5", no:8, q:"宿題の読書感想文を書いた。", a:"かんそうぶん", u:"感想文"},
+    //   {lesson:"冬講5", no:9, q:"姉は暗算がとてもはやい。", a:"あんざん", u:"暗算"},
+    //   {lesson:"冬講5", no:10, q:"かべの落書きをきれいに消す。", a:"け", u:"消"},
+    //   {lesson:"冬講5", no:11, q:"図書イインが本の整理をする。", a:"委員", u:"イイン"},
+    //   {lesson:"冬講5", no:12, q:"ガッキュウ会がひらかれる。", a:"学級", u:"ガッキュウ"},
+    //   {lesson:"冬講5", no:13, q:"試合結果はヨソウどおりだった。", a:"予想", u:"ヨソウ"},
+    //   {lesson:"冬講5", no:14, q:"友だちのヨコガオをかいた。", a:"横顔", u:"ヨコガオ"},
+    //   {lesson:"冬講5", no:15, q:"ゆのみにネットウをそそぐ。", a:"熱湯", u:"ネットウ"},
+    //   {lesson:"冬講5", no:16, q:"おバけ屋しきに行ってみたいな。", a:"化", u:"バ"},
+    //   {lesson:"冬講5", no:17, q:"明日こそハヤオきしよう。", a:"早起", u:"ハヤオ"},
+    //   {lesson:"冬講5", no:18, q:"心を打つモノガタリ。", a:"物語", u:"モノガタリ"},
+    //   {lesson:"冬講5", no:19, q:"日ヨウビはユウエンチへ行く。", a:"遊園地", u:"ユウエンチ"},
+    //   {lesson:"冬講5", no:20, q:"ヒラオヨぎができる。", a:"平泳", u:"ヒラオヨ"},
+
+    //   // 冬講6
+    //   {lesson:"冬講6", no:1, q:"命の大切さについて考える。", a:"いのち", u:"命"},
+    //   {lesson:"冬講6", no:2, q:"育てた魚を川に放す。", a:"はな", u:"放"},
+    //   {lesson:"冬講6", no:3, q:"行進曲に合わせて歩く。", a:"こうしんきょく", u:"行進曲"},
+    //   {lesson:"冬講6", no:4, q:"店でハンバーグを注文した。", a:"ちゅうもん", u:"注文"},
+    //   {lesson:"冬講6", no:5, q:"アルバムの写真を見る。", a:"しゃしん", u:"写真"},
+    //   {lesson:"冬講6", no:6, q:"古い歯ブラシでみがく。", a:"は", u:"歯"},
+    //   {lesson:"冬講6", no:7, q:"すきなスポーツは水泳だ。", a:"すいえい", u:"水泳"},
+    //   {lesson:"冬講6", no:8, q:"この町は有名なお寺がある。", a:"ゆうめい", u:"有名"},
+    //   {lesson:"冬講6", no:9, q:"ピアノの発表会に行った。", a:"はっぴょうかい", u:"発表会"},
+    //   {lesson:"冬講6", no:10, q:"行列してじゅんばんを待つ。", a:"ぎょうれつ", u:"行列"},
+    //   {lesson:"冬講6", no:11, q:"詩のコンクールでニュウショウした。", a:"入賞", u:"ニュウショウ"},
+    //   {lesson:"冬講6", no:12, q:"この時計は三分ススんでいる。", a:"進", u:"スス"},
+    //   {lesson:"冬講6", no:13, q:"先生にショチュウ見まいを出す。", a:"暑中", u:"ショチュウ"},
+    //   {lesson:"冬講6", no:14, q:"うちのニワに犬がまよいこんだ。", a:"庭", u:"ニワ"},
+    //   {lesson:"冬講6", no:15, q:"一輪車のレンシュウをはじめた。", a:"練習", u:"レンシュウ"},
+    //   {lesson:"冬講6", no:16, q:"父はアブラエをかくのがすきだ。", a:"油絵", u:"アブラエ"},
+    //   {lesson:"冬講6", no:17, q:"おばさんは外国にスんでいる。", a:"住", u:"ス"},
+    //   {lesson:"冬講6", no:18, q:"わらいすぎて息がクルしい。", a:"苦", u:"クル"},
+    //   {lesson:"冬講6", no:19, q:"ヒツジの毛をかりとる。", a:"羊", u:"ヒツジ"},
+    //   {lesson:"冬講6", no:20, q:"木のミドリがこくなってきた。", a:"緑", u:"ミドリ"},
+    // ];
+
+    const DEFAULT_CARDS = [
+      // 冬講1
+      {lesson:"冬講1", no:1,  q:"ポケモンの世界に入ったみたいで空想がふくらむ。", a:"くうそう", u:"空想"},
+      {lesson:"冬講1", no:2,  q:"マイクラでオオカミの世話をしてなつかせた。", a:"せわ", u:"世話"},
+      {lesson:"冬講1", no:3,  q:"森がどんどん深くなって、ピカチュウが見えなくなった。", a:"ふか", u:"深"},
+      {lesson:"冬講1", no:4,  q:"ポケモンのことにくわしい学者の話をきいた。", a:"がくしゃ", u:"学者"},
+      {lesson:"冬講1", no:5,  q:"ポケモンの明るい曲を口ずさむ。", a:"きょく", u:"曲"},
+      {lesson:"冬講1", no:6,  q:"マイクラのトロッコが鉄橋をわたった。", a:"てっきょう", u:"鉄橋"},
+      {lesson:"冬講1", no:7,  q:"水泳を習って、ロブロックスの水ステージもこわくない。", a:"なら", u:"習"},
+      {lesson:"冬講1", no:8,  q:"高い所の宝箱に手をのばした。", a:"ところ", u:"所"},
+      {lesson:"冬講1", no:9,  q:"マイクラでくぎを打って看板をつけた。", a:"う", u:"打"},
+      {lesson:"冬講1", no:10, q:"ポケモンの名前クイズみたいに国語の問題をとく。", a:"もんだい", u:"問題"},
+      {lesson:"冬講1", no:11, q:"マイクラでカジを出さないように、マグマの近くは注意！", a:"火事", u:"カジ"},
+      {lesson:"冬講1", no:12, q:"旅行でキュウシュウに行って、ご当地ポケモンをさがした。", a:"九州", u:"キュウシュウ"},
+      {lesson:"冬講1", no:13, q:"ポケモンのタイプ相性をケンキュウして最強をめざす。", a:"研究", u:"ケンキュウ"},
+      {lesson:"冬講1", no:14, q:"マイクラで地図の線をケで消して書きなおした。", a:"消", u:"ケ"},
+      {lesson:"冬講1", no:15, q:"友だちとシンチョウをくらべて、どっちが大きいか勝負！", a:"身長", u:"シンチョウ"},
+      {lesson:"冬講1", no:16, q:"クラスでポケモンのブンシュウを作って、みんなで読んだ。", a:"文集", u:"ブンシュウ"},
+      {lesson:"冬講1", no:17, q:"野球ゲームでイチバンダシャがホームランを打った！", a:"打者", u:"ダシャ"},
+      {lesson:"冬講1", no:18, q:"このバトル、ショウサンがある作戦でいく！", a:"勝算", u:"ショウサン"},
+      {lesson:"冬講1", no:19, q:"ロブロックスでアイテムを売るショウバイをしてみた。", a:"商売", u:"ショウバイ"},
+      {lesson:"冬講1", no:20, q:"がんばったしるしに、むねにくんショウをつけた。", a:"章", u:"ショウ"},
+
+      // 冬講2
+      {lesson:"冬講2", no:1,  q:"ロブロックスの友だちって、すごく身近に感じる。", a:"みぢか", u:"身近"},
+      {lesson:"冬講2", no:2,  q:"ポケモンの名前を学習ノートにまとめた。", a:"がくしゅう", u:"学習"},
+      {lesson:"冬講2", no:3,  q:"体重計にのって、きのうより少し増えてた。", a:"たいじゅうけい", u:"体重計"},
+      {lesson:"冬講2", no:4,  q:"伝説ポケモンに会えるように神様におねがいした。", a:"かみさま", u:"神様"},
+      {lesson:"冬講2", no:5,  q:"ポケモンの他の進化も知りたい！", a:"ほか", u:"他"},
+      {lesson:"冬講2", no:6,  q:"ショップに上着をおきわすれて大あわて。", a:"うわぎ", u:"上着"},
+      {lesson:"冬講2", no:7,  q:"マイクラでバケツから水を注いで畑を作った。", a:"そそ", u:"注"},
+      {lesson:"冬講2", no:8,  q:"負けても気持ちが安定してると、次は勝てる。", a:"あんてい", u:"安定"},
+      {lesson:"冬講2", no:9,  q:"ゲームのやりすぎで、からだの調子がイマイチ。", a:"ちょうし", u:"調子"},
+      {lesson:"冬講2", no:10, q:"けがで短期間だけ休んで、すぐ元気になった。", a:"たんきかん", u:"短期間"},
+      {lesson:"冬講2", no:11, q:"マイクラの畑でタウえみたいに種をまいた。", a:"田植", u:"タウ"},
+      {lesson:"冬講2", no:12, q:"シンカイみたいに暗い洞くつでレア鉱石をさがした。", a:"深海", u:"シンカイ"},
+      {lesson:"冬講2", no:13, q:"船のイベントにジョウセンして、宝島へ行った。", a:"乗船", u:"ジョウセン"},
+      {lesson:"冬講2", no:14, q:"スマホにシもんをつけないように、手をふいた。", a:"指", u:"シ"},
+      {lesson:"冬講2", no:15, q:"メイショウの場所で、写真をパシャ！", a:"名勝", u:"メイショウ"},
+      {lesson:"冬講2", no:16, q:"ポケモンバトル中、イキをのんで見まもった。", a:"息", u:"イキ"},
+      {lesson:"冬講2", no:17, q:"タイムアタックで足をハヤめてゴールした。", a:"速", u:"ハヤ"},
+      {lesson:"冬講2", no:18, q:"マイクラで作りたいリソウの城を思いえがく。", a:"リソウ", u:"リソウ"},
+      {lesson:"冬講2", no:19, q:"マゴコロこめて、友だちのために家を作った。", a:"真心", u:"マゴコロ"},
+      {lesson:"冬講2", no:20, q:"ヨの中にはいろんなゲームがあるんだなあ。", a:"世", u:"ヨ"},
+
+      // 冬講3
+      {lesson:"冬講3", no:1,  q:"校庭に集合して、ポケモンごっこが始まった。", a:"こうてい", u:"校庭"},
+      {lesson:"冬講3", no:2,  q:"草笛で、ポケモンの呼び声みたいな音を出した。", a:"くさぶえ", u:"草笛"},
+      {lesson:"冬講3", no:3,  q:"マイクラのごみは投げずに、チェストにしまう。", a:"な", u:"投"},
+      {lesson:"冬講3", no:4,  q:"マイクラでトロッコの運転がうまくなった。", a:"うんてん", u:"運転"},
+      {lesson:"冬講3", no:5,  q:"ロブロックスのはなれ小島ステージに行った。", a:"こじま", u:"小島"},
+      {lesson:"冬講3", no:6,  q:"温泉みたいな湯船につかって、HP回復！", a:"ゆぶね", u:"湯船"},
+      {lesson:"冬講3", no:7,  q:"マイクラで大豆みたいな作物をたくさん育てたい。", a:"だいず", u:"大豆"},
+      {lesson:"冬講3", no:8,  q:"ダイヤのねだんが倍になってびっくり。", a:"ばい", u:"倍"},
+      {lesson:"冬講3", no:9,  q:"万年筆で、ポケモンの絵に丸をつけて合格！", a:"まんねんひつ", u:"万年筆"},
+      {lesson:"冬講3", no:10, q:"地下鉄みたいな線路をマイクラで作った。", a:"ちかてつ", u:"地下鉄"},
+      {lesson:"冬講3", no:11, q:"帰りにホンヤでポケモン図鑑っぽい本を見た。", a:"本屋", u:"ホンヤ"},
+      {lesson:"冬講3", no:12, q:"ムカシバナシみたいに、伝説ポケモンの話を聞いた。", a:"昔話", u:"ムカシバナシ"},
+      {lesson:"冬講3", no:13, q:"テソウを見てもらって「運がいいね！」と言われた。", a:"手相", u:"テソウ"},
+      {lesson:"冬講3", no:14, q:"雪のステージはハクギンの世界みたいだった。", a:"白銀", u:"ハクギン"},
+      {lesson:"冬講3", no:15, q:"好きなポケモンについて友だちとタイダンした。", a:"対談", u:"タイダン"},
+      {lesson:"冬講3", no:16, q:"母がタンカでポケモンをほめてくれた。", a:"短歌", u:"タンカ"},
+      {lesson:"冬講3", no:17, q:"ロブロックスのダイメイを見て、やってみたくなった。", a:"題名", u:"ダイメイ"},
+      {lesson:"冬講3", no:18, q:"チームのルールをサダめて、勝ちにいく！", a:"定", u:"サダ"},
+      {lesson:"冬講3", no:19, q:"スコアをノートにキニュウして記録した。", a:"記入", u:"キニュウ"},
+      {lesson:"冬講3", no:20, q:"ポケモンの技を上手にするためにチョウキョウする。", a:"調教", u:"チョウキョウ"},
+
+      // 冬講4
+      {lesson:"冬講4", no:1,  q:"マイクラで花畑を作って、最高の景色にした。", a:"はなばたけ", u:"花畑"},
+      {lesson:"冬講4", no:2,  q:"ポケモンカードを本箱にしまって整理した。", a:"ほんばこ", u:"本箱"},
+      {lesson:"冬講4", no:3,  q:"レアポケモンに会えて、とても幸せ！", a:"しあわ", u:"幸"},
+      {lesson:"冬講4", no:4,  q:"ボス戦で力投して、ぎりぎり勝てた。", a:"りきとう", u:"力投"},
+      {lesson:"冬講4", no:5,  q:"冬休みのゲーム時間も、もう終わりだ…。", a:"お", u:"終"},
+      {lesson:"冬講4", no:6,  q:"天ぷら定食で元気をチャージしてから冒険！", a:"ていしょく", u:"定食"},
+      {lesson:"冬講4", no:7,  q:"友だちの電話帳を見て、番号をたしかめた。", a:"でんわちょう", u:"電話帳"},
+      {lesson:"冬講4", no:8,  q:"ロブロックスで急いで追いかけて、ゴールした！", a:"いそ", u:"急"},
+      {lesson:"冬講4", no:9,  q:"大昔のポケモンの話ってロマンがある。", a:"おおむかし", u:"大昔"},
+      {lesson:"冬講4", no:10, q:"クリーパーが走り去って、セーフだった。", a:"さ", u:"去"},
+      {lesson:"冬講4", no:11, q:"カゾクでポケモンセンターに行った。", a:"家族", u:"カゾク"},
+      {lesson:"冬講4", no:12, q:"オンスイプールみたいな温水エリアで遊んだ。", a:"温水", u:"オンスイ"},
+      {lesson:"冬講4", no:13, q:"ソッキみたいに速くメモして、作戦を忘れない。", a:"速記", u:"ソッキ"},
+      {lesson:"冬講4", no:14, q:"キュウソクしてから、もう一回チャレンジ！", a:"休息", u:"キュウソク"},
+      {lesson:"冬講4", no:15, q:"イケンを言い合って、最強チームを作る。", a:"意見", u:"イケン"},
+      {lesson:"冬講4", no:16, q:"ヒニクみたいに聞こえて、ちょっとムッとした。", a:"皮肉", u:"ヒニク"},
+      {lesson:"冬講4", no:17, q:"マイクラでサカミチを作って、村まで近道！", a:"坂道", u:"サカミチ"},
+      {lesson:"冬講4", no:18, q:"朝早くトウコウして、休み時間にちょいポケ！", a:"登校", u:"トウコウ"},
+      {lesson:"冬講4", no:19, q:"負けてシンパイになったけど、次は勝つ！", a:"心配", u:"シンパイ"},
+      {lesson:"冬講4", no:20, q:"ゴリラのウゴきをまねして、ダンスした。", a:"動", u:"ウゴ"},
+
+      // 冬講5
+      {lesson:"冬講5", no:1,  q:"ロブロックス大会で決勝にのこった！", a:"けっしょう", u:"決勝"},
+      {lesson:"冬講5", no:2,  q:"マイクラの集合場所は村の広場！", a:"しゅうごう", u:"集合"},
+      {lesson:"冬講5", no:3,  q:"ロブロックスの劇で、主人公の役をした。", a:"やく", u:"役"},
+      {lesson:"冬講5", no:4,  q:"マイクラで球根みたいなタネを植えてみた。", a:"きゅうこん", u:"球根"},
+      {lesson:"冬講5", no:5,  q:"太陽がしずむ前に、家に帰ってセーブ！", a:"たいよう", u:"太陽"},
+      {lesson:"冬講5", no:6,  q:"都会みたいな大きい街をマイクラで作りたい。", a:"とかい", u:"都会"},
+      {lesson:"冬講5", no:7,  q:"上等なアイテムを引いて、テンション爆上げ！", a:"じょうとう", u:"上等"},
+      {lesson:"冬講5", no:8,  q:"ポケモンの感想文を書いて、好きポイントをまとめた。", a:"かんそうぶん", u:"感想文"},
+      {lesson:"冬講5", no:9,  q:"暗算が速いと、買い物ゲームで得する。", a:"あんざん", u:"暗算"},
+      {lesson:"冬講5", no:10, q:"マイクラの落書きをケで消して、きれいにした。", a:"け", u:"消"},
+      {lesson:"冬講5", no:11, q:"図書イインとして、ポケモンの本をきれいに並べた。", a:"委員", u:"イイン"},
+      {lesson:"冬講5", no:12, q:"ガッキュウ会で、好きなゲーム発表をした。", a:"学級", u:"ガッキュウ"},
+      {lesson:"冬講5", no:13, q:"ヨソウどおりに勝てて、ガッツポーズ！", a:"予想", u:"ヨソウ"},
+      {lesson:"冬講5", no:14, q:"ヨコガオがかっこいいポケモンを絵にした。", a:"横顔", u:"ヨコガオ"},
+      {lesson:"冬講5", no:15, q:"ネットウ注意！カップめんの湯気がすごい。", a:"熱湯", u:"ネットウ"},
+      {lesson:"冬講5", no:16, q:"おバけ屋しきで「バッ！」と出てきてビビった。", a:"化", u:"バ"},
+      {lesson:"冬講5", no:17, q:"明日はハヤオきして、朝ポケしよう。", a:"早起", u:"ハヤオ"},
+      {lesson:"冬講5", no:18, q:"モノガタリみたいな冒険をマイクラで作る。", a:"物語", u:"モノガタリ"},
+      {lesson:"冬講5", no:19, q:"ユウエンチみたいな遊園地をマイクラで建てたい。", a:"遊園地", u:"ユウエンチ"},
+      {lesson:"冬講5", no:20, q:"プールでヒラオヨぎの練習をした。", a:"平泳", u:"ヒラオヨ"},
+
+      // 冬講6
+      {lesson:"冬講6", no:1,  q:"命を大切にして、ポケモンもやさしく育てる。", a:"いのち", u:"命"},
+      {lesson:"冬講6", no:2,  q:"マイクラで育てた魚を川に放してやった。", a:"はな", u:"放"},
+      {lesson:"冬講6", no:3,  q:"行進曲でスタート！みんなで歩いて出発だ。", a:"こうしんきょく", u:"行進曲"},
+      {lesson:"冬講6", no:4,  q:"ショップで回復アイテムを注文した。", a:"ちゅうもん", u:"注文"},
+      {lesson:"冬講6", no:5,  q:"アルバムの写真で、ポケモン旅を思い出した。", a:"しゃしん", u:"写真"},
+      {lesson:"冬講6", no:6,  q:"歯ブラシでしっかりみがいて、HPも気分も回復！", a:"は", u:"歯"},
+      {lesson:"冬講6", no:7,  q:"水泳が得意だと、水ステージで強い。", a:"すいえい", u:"水泳"},
+      {lesson:"冬講6", no:8,  q:"この町は有名で、みんな知ってる観光地だ。", a:"ゆうめい", u:"有名"},
+      {lesson:"冬講6", no:9,  q:"発表会で、好きなポケモンを紹介した。", a:"はっぴょうかい", u:"発表会"},
+      {lesson:"冬講6", no:10, q:"行列に並んで、ガチャの順番を待った。", a:"ぎょうれつ", u:"行列"},
+      {lesson:"冬講6", no:11, q:"コンクールでニュウショウして、うれしくてジャンプ！", a:"入賞", u:"ニュウショウ"},
+      {lesson:"冬講6", no:12, q:"レベルがどんどんススんで、強くなった。", a:"進", u:"スス"},
+      {lesson:"冬講6", no:13, q:"夏にショチュウ見まいみたいなカードを送った。", a:"暑中", u:"ショチュウ"},
+      {lesson:"冬講6", no:14, q:"うちのニワで、ポケモンごっこをした。", a:"庭", u:"ニワ"},
+      {lesson:"冬講6", no:15, q:"ロブロックスでレンシュウして、難しい面をクリア！", a:"練習", u:"レンシュウ"},
+      {lesson:"冬講6", no:16, q:"アブラエでピカチュウをぬってみた。", a:"油絵", u:"アブラエ"},
+      {lesson:"冬講6", no:17, q:"ロブロックスの世界にスんでるみたいに遊んだ。", a:"住", u:"ス"},
+      {lesson:"冬講6", no:18, q:"笑いすぎておなかがクルしくなった。", a:"苦", u:"クル"},
+      {lesson:"冬講6", no:19, q:"マイクラでヒツジの毛を集めてベッドを作った。", a:"羊", u:"ヒツジ"},
+      {lesson:"冬講6", no:20, q:"森のミドリがこくて、探検がワクワクする。", a:"緑", u:"ミドリ"},
+    ];
+
+
+
+    // -----------------------------
+    // Persistence (localStorage)
+    // -----------------------------
+    const LS_KEY = "kanji_flash_state_v2_kid_ui";
+    const LS_DATA_KEY = "kanji_flash_data_v2_kid_ui";
+
+    function loadCards(){
+      const raw = localStorage.getItem(LS_DATA_KEY);
+      if(!raw) return DEFAULT_CARDS.slice();
+      try{
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed)) return parsed;
+      }catch(e){}
+      return DEFAULT_CARDS.slice();
+    }
+    function saveCards(cards){ localStorage.setItem(LS_DATA_KEY, JSON.stringify(cards)); }
+
+    function loadState(){
+      const raw = localStorage.getItem(LS_KEY);
+      if(!raw) return { fav:{}, ok:{}, miss:{}, orderSeed:null };
+      try{
+        const st = JSON.parse(raw);
+        return {
+          fav: st.fav || {},
+          ok: st.ok || {},
+          miss: st.miss || {},
+          orderSeed: st.orderSeed ?? null,
+        };
+      }catch(e){
+        return { fav:{}, ok:{}, miss:{}, orderSeed:null };
+      }
+    }
+    function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+    // -----------------------------
+    // Helpers
+    // -----------------------------
+    const $ = (id) => document.getElementById(id);
+    const toast = (msg) => {
+      const el = $("toast");
+      el.textContent = msg;
+      el.style.display = "block";
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.style.display = "none", 1300);
+    };
+
+    const keyOf = (c) => `${c.lesson}#${c.no}`;
+    function normalize(s){
+      return (s ?? "").toString().trim().toLowerCase();
+    }
+
+    // deterministic shuffle with seed
+    function mulberry32(a){
+      return function(){
+        let t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      }
+    }
+    function shuffled(arr, seed){
+      const out = arr.slice();
+      const rnd = mulberry32(seed);
+      for(let i = out.length - 1; i > 0; i--){
+        const j = Math.floor(rnd() * (i + 1));
+        [out[i], out[j]] = [out[j], out[i]];
+      }
+      return out;
+    }
+
+    // Safe HTML escape (for innerHTML)
+    function escapeHtml(s){
+      return (s ?? "").toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+    function formatWithUnderline(text, underline){
+      const t = (text ?? "").toString();
+      const u = (underline ?? "").toString();
+      if(!u) return escapeHtml(t);
+      const idx = t.indexOf(u);
+      if(idx < 0) return escapeHtml(t);
+      const before = t.slice(0, idx);
+      const after = t.slice(idx + u.length);
+      return `${escapeHtml(before)}<span class="uline">${escapeHtml(u)}</span>${escapeHtml(after)}`;
+    }
+
+    // -----------------------------
+    // App state
+    // -----------------------------
+    let cards = loadCards();
+    let state = loadState();
+
+    let filtered = [];
+    let index = 0;
+    let showAnswer = false;
+    let autoTimer = null;
+
+    // -----------------------------
+    // Filtering
+    // -----------------------------
+    function getFilter(){
+      return { lesson: $("lesson").value, q: normalize($("q").value) };
+    }
+
+    function applyFilter(){
+      const {lesson, q} = getFilter();
+      let base = cards.slice();
+
+      if(lesson === "FAV"){
+        base = base.filter(c => state.fav[keyOf(c)]);
+      }else if(lesson === "MISS"){
+        base = base.filter(c => state.miss[keyOf(c)]);
+      }else if(lesson !== "ALL"){
+        base = base.filter(c => c.lesson === lesson);
+      }
+
+      if(q){
+        base = base.filter(c =>
+          normalize(c.q).includes(q) ||
+          normalize(c.a).includes(q) ||
+          normalize(c.lesson).includes(q) ||
+          String(c.no).includes(q)
+        );
+      }
+
+      if(state.orderSeed != null){
+        base = shuffled(base, state.orderSeed);
+      }
+
+      filtered = base;
+      if(filtered.length === 0) index = 0;
+      else index = Math.max(0, Math.min(index, filtered.length - 1));
+
+      render();
+      renderList();
+    }
+
+    function current(){ return filtered[index] || null; }
+
+    // -----------------------------
+    // Rendering
+    // -----------------------------
+    function render(){
+      const c = current();
+      const mode = $("mode").value; // Q or A
+
+      // counts
+      const favN = Object.keys(state.fav).length;
+      const missN = Object.keys(state.miss).length;
+      const okN = Object.keys(state.ok).length;
+
+      $("favCount").textContent = favN;
+      $("missCount").textContent = missN;
+      $("okCount").textContent = okN;
+      $("xp").textContent = okN * 10;
+
+      $("listCount").textContent = filtered.length;
+      const lc2 = $("listCount2"); if(lc2) lc2.textContent = filtered.length;
+
+      $("progress").textContent = filtered.length ? `${index+1}/${filtered.length}` : `0/0`;
+
+      // auto state label
+      const sec = Number($("auto").value);
+      $("autoState").textContent = sec ? `${sec}s` : "—";
+
+      if(!c){
+        $("pill").textContent = "カードなし";
+        $("kicker").textContent = "条件に合うカードがないよ";
+        $("prompt").textContent = "上の『クエスト』や『さがす』を変えてね";
+        $("answer").style.display = "none";
+        setButtonsDisabled(true);
+        $("tapBadge").textContent = "😵";
+        return;
+      }
+
+      setButtonsDisabled(false);
+
+      const k = keyOf(c);
+      const isFav = !!state.fav[k];
+      const isMiss = !!state.miss[k];
+      const isOk = !!state.ok[k];
+
+      const label = `${c.lesson} / #${c.no}`;
+      $("pill").textContent = label;
+
+      const statusBits = [
+        isFav ? "⭐" : "",
+        isOk ? "✅" : "",
+        isMiss ? "💥" : "",
+      ].filter(Boolean).join(" ");
+      $("kicker").textContent = statusBits ? `${label}  ・  ${statusBits}` : label;
+
+      const frontIsQuestion = (mode === "Q");
+      const front = frontIsQuestion ? c.q : c.a;
+      const back  = frontIsQuestion ? c.a : c.q;
+
+      if(frontIsQuestion){
+        $("prompt").innerHTML = formatWithUnderline(front, c.u);
+        $("answer").textContent = back;
+      }else{
+        $("prompt").textContent = front;
+        $("answer").innerHTML = formatWithUnderline(back, c.u);
+      }
+
+      $("answer").style.display = showAnswer ? "block" : "none";
+      $("toggleFav").textContent = isFav ? "⭐ すき解除" : "⭐ すき";
+
+      // small “tap” helper changes
+      $("tapBadge").textContent = showAnswer ? "こたえ！" : "タップ！";
+    }
+
+    function setButtonsDisabled(disabled){
+      ["prev","next","flip","shuffle","markOk","markMiss","toggleFav","reset"].forEach(id=>{
+        const el = $(id);
+        if(el) el.disabled = disabled;
+      });
+    }
+
+    function renderList(){
+      const mode = $("mode").value;
+
+      // Mobile list
+      renderListInto($("tbody"), filtered, mode);
+
+      // Desktop list (when visible)
+      const t2 = $("tbody2");
+      if(t2) renderListInto(t2, filtered, mode);
+
+      // show desktop side panel only on wide screens
+      const desktopList = $("desktopList");
+      if(desktopList){
+        const wide = window.matchMedia("(min-width: 920px)").matches;
+        desktopList.style.display = wide ? "block" : "none";
+        const listDetails = $("listDetails");
+        if(listDetails){
+          // On desktop, keep details open for keyboard users but it's ok either way
+          // (we don't force open/close to avoid annoying)
+        }
+      }
+    }
+
+    function renderListInto(tbody, items, mode){
+      if(!tbody) return;
+      tbody.innerHTML = "";
+      const rows = items.slice(0, 500);
+      for(const c of rows){
+        const k = keyOf(c);
+        const tags = [state.fav[k] ? "⭐" : "", state.ok[k] ? "✅" : "", state.miss[k] ? "💥" : ""].filter(Boolean).join(" ");
+
+        const frontIsQuestion = (mode === "Q");
+        const front = frontIsQuestion ? c.q : c.a;
+        const back  = frontIsQuestion ? c.a : c.q;
+
+        const frontHtml = frontIsQuestion ? formatWithUnderline(front, c.u) : escapeHtml(front);
+        const backHtml  = frontIsQuestion ? escapeHtml(back) : formatWithUnderline(back, c.u);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="tag">${escapeHtml(c.lesson)}</span></td>
+          <td><span class="tag">${escapeHtml(String(c.no))}</span></td>
+          <td>${frontHtml} ${tags ? `<span class="tag" style="margin-left:8px;">${escapeHtml(tags)}</span>` : ""}</td>
+          <td><b>${backHtml}</b></td>
+          <td><button class="rowbtn" data-k="${escapeHtml(k)}">ひらく</button></td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      tbody.querySelectorAll(".rowbtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const k = btn.getAttribute("data-k");
+          const idx = filtered.findIndex(c => keyOf(c) === k);
+          if(idx >= 0){
+            index = idx;
+            showAnswer = false;
+            render();
+            toast("ジャンプした！");
+            // close mobile list after jump (nice on iPhone)
+            const listDetails = $("listDetails");
+            if(listDetails && !window.matchMedia("(min-width: 920px)").matches){
+              listDetails.open = false;
+            }
+          }
+        });
+      });
+    }
+
+    // -----------------------------
+    // Actions
+    // -----------------------------
+    function flip(){
+      showAnswer = !showAnswer;
+      render();
+    }
+    function next(){
+      if(filtered.length <= 1) return;
+      index = (index + 1) % filtered.length;
+      showAnswer = false;
+      render();
+    }
+    function prev(){
+      if(filtered.length <= 1) return;
+      index = (index - 1 + filtered.length) % filtered.length;
+      showAnswer = false;
+      render();
+    }
+    function toggleFav(){
+      const c = current(); if(!c) return;
+      const k = keyOf(c);
+      if(state.fav[k]){ delete state.fav[k]; toast("⭐はずした"); }
+      else{ state.fav[k] = 1; toast("⭐つけた"); }
+      saveState();
+      applyFilter();
+    }
+    function markOk(){
+      const c = current(); if(!c) return;
+      const k = keyOf(c);
+      state.ok[k] = 1;
+      if(state.miss[k]) delete state.miss[k];
+      saveState();
+      toast("✅できた！");
+      applyFilter();
+    }
+    function markMiss(){
+      const c = current(); if(!c) return;
+      const k = keyOf(c);
+      state.miss[k] = 1;
+      if(state.ok[k]) delete state.ok[k];
+      saveState();
+      toast("💥ミス！");
+      applyFilter();
+    }
+    function doShuffle(){
+      state.orderSeed = Math.floor(Math.random() * 2**31);
+      saveState();
+      applyFilter();
+      toast("🎲まぜた！");
+    }
+    function resetAll(){
+      if(!confirm("学習状態（⭐/✅/💥/まぜる順）をリセットする？")) return;
+      state = { fav:{}, ok:{}, miss:{}, orderSeed:null };
+      saveState();
+      applyFilter();
+      toast("♻️リセット！");
+    }
+
+    // Auto play
+    function setAuto(){
+      const sec = Number($("auto").value);
+      clearInterval(autoTimer);
+      autoTimer = null;
+      if(sec > 0){
+        autoTimer = setInterval(() => {
+          if(!showAnswer){ showAnswer = true; render(); }
+          else{ next(); }
+        }, sec * 1000);
+      }
+      render();
+    }
+
+    // -----------------------------
+    // Data editor
+    // -----------------------------
+    function openDataDlg(){
+      $("dataErr").textContent = "";
+      $("dataArea").value = JSON.stringify(cards, null, 2);
+      $("dataDlg").showModal();
+    }
+
+    function applyDataFromTextarea(){
+      const txt = $("dataArea").value;
+      try{
+        const parsed = JSON.parse(txt);
+        if(!Array.isArray(parsed)) throw new Error("JSONは配列である必要があります");
+        for(const it of parsed){
+          if(typeof it !== "object" || it === null) throw new Error("各要素はオブジェクトである必要があります");
+          if(
+            typeof it.lesson !== "string" ||
+            typeof it.no !== "number" ||
+            typeof it.q !== "string" ||
+            typeof it.a !== "string" ||
+            (it.u !== undefined && typeof it.u !== "string")
+          ){
+            throw new Error("各要素は {lesson:string, no:number, q:string, a:string, u?:string} が必要です");
+          }
+        }
+        cards = parsed;
+        saveCards(cards);
+        $("dataErr").textContent = "";
+        toast("🧰反映した！");
+        applyFilter();
+        $("dataDlg").close();
+      }catch(e){
+        $("dataErr").textContent = "エラー: " + (e?.message || String(e));
+      }
+    }
+
+    function restoreDefaultData(){
+      if(!confirm("カードデータを初期状態に戻す？（学習状態は残る）")) return;
+      cards = DEFAULT_CARDS.slice();
+      saveCards(cards);
+      toast("🧱元にもどした！");
+      applyFilter();
+    }
+
+    // -----------------------------
+    // Events
+    // -----------------------------
+    function bind(){
+      // tap/click card
+      $("flashbox").addEventListener("click", flip);
+
+      // keyboard (PC)
+      $("flashbox").addEventListener("keydown", (e) => {
+        if(e.key === " " || e.key === "Enter"){ e.preventDefault(); flip(); }
+      });
+
+      $("prev").addEventListener("click", prev);
+      $("next").addEventListener("click", next);
+      $("flip").addEventListener("click", flip);
+      $("shuffle").addEventListener("click", doShuffle);
+      $("toggleFav").addEventListener("click", toggleFav);
+      $("markOk").addEventListener("click", markOk);
+      $("markMiss").addEventListener("click", markMiss);
+      $("reset").addEventListener("click", resetAll);
+
+      $("lesson").addEventListener("change", () => { index = 0; showAnswer = false; applyFilter(); });
+      $("mode").addEventListener("change", () => { showAnswer = false; render(); renderList(); });
+      $("q").addEventListener("input", () => { index = 0; showAnswer = false; applyFilter(); });
+      $("auto").addEventListener("change", setAuto);
+
+      // dialogs
+      $("btnHelp").addEventListener("click", () => $("helpDlg").showModal());
+      $("closeHelp").addEventListener("click", () => $("helpDlg").close());
+      $("btnData").addEventListener("click", openDataDlg);
+      $("closeData").addEventListener("click", () => $("dataDlg").close());
+      $("applyData").addEventListener("click", applyDataFromTextarea);
+      $("restoreData").addEventListener("click", restoreDefaultData);
+
+      // global shortcuts (desktop)
+      window.addEventListener("keydown", (e) => {
+        const t = e.target;
+        if(t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
+        if($("helpDlg").open || $("dataDlg").open) return;
+
+        if(e.key === "ArrowRight") next();
+        else if(e.key === "ArrowLeft") prev();
+        else if(e.key === " "){ e.preventDefault(); flip(); }
+        else if(e.key.toLowerCase() === "s") doShuffle();
+        else if(e.key.toLowerCase() === "f") toggleFav();
+        else if(e.key === "1") markOk();
+        else if(e.key === "2") markMiss();
+        else if(e.key === "Escape"){
+          if(document.body.classList.contains("focus-mode")){
+            document.body.classList.remove("focus-mode");
+            toast("🔍 集中モード OFF");
+          }
+        }
+      });
+
+      // rerender list on resize (for mobile/desktop switch)
+      window.addEventListener("resize", () => renderList());
+
+      applyFilter();
+      setAuto();
+
+      $("btnFocus").addEventListener("click", toggleFocusMode);
+    }
+
+    function toggleFocusMode(){
+      document.body.classList.toggle("focus-mode");
+      const on = document.body.classList.contains("focus-mode");
+      toast(on ? "🔍 集中モード ON" : "🔍 集中モード OFF");
+
+      // iOS/Androidで「なんとなく全画面」感を出したい場合（対応ブラウザのみ）
+      const el = document.documentElement;
+      if(on){
+        if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+      }else{
+        if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+      }
+    }
+
+
+    bind();
+  </script>
+</body>
+</html>
